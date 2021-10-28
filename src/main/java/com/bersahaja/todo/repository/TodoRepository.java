@@ -11,5 +11,5 @@ public interface TodoRepository {
 
   Integer delete(Integer id);
 
-  Integer edit(Integer id, Integer status);
+  Integer edit(Integer id, String status);
 }

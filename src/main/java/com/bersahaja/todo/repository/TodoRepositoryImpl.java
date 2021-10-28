@@ -60,12 +60,31 @@ public class TodoRepositoryImpl implements TodoRepository{
   @Override
   public Integer delete(Integer id) {
     String sql = "DELETE FROM todolist WHERE id = ?";
-    return null;
+    try(Connection connection = dataSource.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
+
+      statement.setInt(1, id);
+
+      return statement.executeUpdate();
+
+    }catch (SQLException e){
+      throw new RuntimeException();
+    }
   }
 
   @Override
-  public Integer edit(Integer id, Integer status) {
+  public Integer edit(Integer id, String status) {
     String sql = "UPDATE todolist SET status = ? WHERE id = ?";
-    return null;
+    try(Connection connection = dataSource.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
+
+      statement.setInt(1, id);
+      statement.setString(2, status);
+
+      return statement.executeUpdate();
+
+    }catch (SQLException e){
+      throw new RuntimeException();
+    }
   }
 }
