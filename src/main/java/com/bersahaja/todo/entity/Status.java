@@ -8,8 +8,7 @@ public enum Status {
   DIKERJAKAN,
   SELESAI;
 
-  public static Status convert(ResultSet resultSet) throws SQLException {
-    String status = resultSet.getString("status");
+  public static Status convert(String status) throws SQLException {
     if(status.equalsIgnoreCase("belum")){
       return Status.BELUM;
     }else if(status.equalsIgnoreCase("dikerjakan")){

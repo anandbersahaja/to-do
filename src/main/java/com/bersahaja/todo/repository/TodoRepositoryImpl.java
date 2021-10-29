@@ -30,7 +30,7 @@ public class TodoRepositoryImpl implements TodoRepository{
                   resultSet.getDate("deadline").toLocalDate()
                           .atTime(resultSet.getTime("deadline")
                                   .toLocalTime()),
-                  Status.convert(resultSet)
+                  Status.convert(resultSet.getString("status"))
           ));
         }
         return todos;
@@ -78,8 +78,8 @@ public class TodoRepositoryImpl implements TodoRepository{
     try(Connection connection = dataSource.getConnection();
         PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
 
-      statement.setInt(1, id);
-      statement.setString(2, status);
+      statement.setString(1, status);
+      statement.setInt(2, id);
 
       return statement.executeUpdate();
 
