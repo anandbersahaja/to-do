@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TodoRepositoryImpl implements TodoRepository{
-  private HikariDataSource dataSource;
+  private final HikariDataSource dataSource;
 
   public TodoRepositoryImpl(HikariDataSource dataSource) {
     this.dataSource = dataSource;
@@ -36,7 +36,7 @@ public class TodoRepositoryImpl implements TodoRepository{
         return todos;
       }
     }catch (SQLException e){
-      throw new RuntimeException();
+      throw new RuntimeException(e.getMessage());
     }
   }
 
@@ -53,7 +53,7 @@ public class TodoRepositoryImpl implements TodoRepository{
       return statement.executeUpdate();
 
     }catch (SQLException e){
-      throw new RuntimeException();
+      throw new RuntimeException(e.getMessage());
     }
   }
 
@@ -68,7 +68,7 @@ public class TodoRepositoryImpl implements TodoRepository{
       return statement.executeUpdate();
 
     }catch (SQLException e){
-      throw new RuntimeException();
+      throw new RuntimeException(e.getMessage());
     }
   }
 
@@ -84,7 +84,35 @@ public class TodoRepositoryImpl implements TodoRepository{
       return statement.executeUpdate();
 
     }catch (SQLException e){
-      throw new RuntimeException();
+      throw new RuntimeException(e.getMessage());
+    }
+  }
+
+  @Override
+  public List<Todo> selectByStatus(Status status) {
+    String sql = "SELECT * FROM todolist WHERE status = ?";
+    try(Connection connection = dataSource.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql))
+    {
+      statement.setString(1, status.toString());
+
+      try (ResultSet resultSet = statement.executeQuery()) {
+        List<Todo> todos = new ArrayList<>();
+
+        while(resultSet.next()){
+          todos.add(new Todo(
+                  resultSet.getInt("id"),
+                  resultSet.getString("task"),
+                  resultSet.getDate("deadline").toLocalDate()
+                          .atTime(resultSet.getTime("deadline")
+                                  .toLocalTime()),
+                  Status.convert(resultSet.getString("status"))
+          ));
+        }
+        return todos;
+      }
+    }catch (SQLException e){
+      throw new RuntimeException(e.getMessage());
     }
   }
 }

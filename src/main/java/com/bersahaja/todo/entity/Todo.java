@@ -8,25 +8,25 @@ public class Todo {
   private LocalDateTime dateTime;
   private Status status;
 
-  public Todo(Integer id, String task) {
-    this.id = id;
-    this.task = task;
-  }
-
   public Todo(Integer id, String task, LocalDateTime dateTime) {
     this.id = id;
     this.task = task;
     this.dateTime = dateTime;
   }
 
-  public Todo(Integer id, String task, Status status) {
+  public Todo(Integer id, String task, LocalDateTime dateTime, Status status) {
     this.id = id;
     this.task = task;
+    this.dateTime = dateTime;
     this.status = status;
   }
 
-  public Todo(Integer id, String task, LocalDateTime dateTime, Status status) {
-    this.id = id;
+  public Todo(String task, LocalDateTime dateTime) {
+    this.task = task;
+    this.dateTime = dateTime;
+  }
+
+  public Todo(String task, LocalDateTime dateTime, Status status) {
     this.task = task;
     this.dateTime = dateTime;
     this.status = status;

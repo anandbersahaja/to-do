@@ -34,6 +34,24 @@ public class TodoRepositoryTest {
   }
 
   @Test
+  void selectBystatus() {
+    try {
+      List<Todo> todos = repository.selectByStatus(Status.SELESAI);
+//      Assertions.assertNotNull(todos);
+//      Assertions.assertFalse(todos.isEmpty());
+
+      todos.forEach(todo -> {
+        System.out.println(todo.getId());
+        System.out.println(todo.getTask());
+        System.out.println(todo.getDateTime());
+        System.out.println(todo.getStatus());
+      });
+    }catch (RuntimeException e){
+      System.out.println("Error: "+ e.getMessage());
+    }
+  }
+
+  @Test
   void testAdd() throws SQLException {
     Todo todo = new Todo();
     todo.setTask("UTS MPSI");
@@ -67,5 +85,10 @@ public class TodoRepositoryTest {
     }catch (RuntimeException e){
       System.out.println(e.getMessage());
     }
+  }
+
+  @Test
+  void print() {
+    System.out.println(Status.SELESAI.toString());
   }
 }

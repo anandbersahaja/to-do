@@ -9,12 +9,18 @@ public enum Status {
   SELESAI;
 
   public static Status convert(String status) throws SQLException {
-    if(status.equalsIgnoreCase("belum")){
-      return Status.BELUM;
-    }else if(status.equalsIgnoreCase("dikerjakan")){
-      return Status.DIKERJAKAN;
-    }else {
+    if(status.equalsIgnoreCase("selesai") ||
+            status.equalsIgnoreCase("sudah")){
       return Status.SELESAI;
+    }
+
+    else if(status.equalsIgnoreCase("dikerjakan") ||
+            status.equalsIgnoreCase("dikerjaain")){
+      return Status.DIKERJAKAN;
+    }
+
+    else {
+      return Status.BELUM;
     }
   }
 }
