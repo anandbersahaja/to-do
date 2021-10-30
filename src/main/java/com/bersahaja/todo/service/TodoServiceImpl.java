@@ -3,13 +3,11 @@ package com.bersahaja.todo.service;
 import com.bersahaja.todo.entity.Status;
 import com.bersahaja.todo.entity.Todo;
 import com.bersahaja.todo.repository.TodoRepository;
-import com.bersahaja.todo.util.Scan;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public class TodoServiceImpl implements TodoService{
-  private TodoRepository repository;
+  private final TodoRepository repository;
 
   public TodoServiceImpl(TodoRepository repository) {
     this.repository = repository;
@@ -27,12 +25,11 @@ public class TodoServiceImpl implements TodoService{
   }
 
   @Override
-  public List<Todo> selectByStatus() {
+  public List<Todo> selectByStatus(Status status) {
     try {
-      Status status = Scan.getStatus("Status");
       return repository.selectByStatus(status);
 
-    }catch (RuntimeException | SQLException e){
+    }catch (RuntimeException e){
       throw new RuntimeException(e.getMessage());
     }
   }
@@ -58,21 +55,27 @@ public class TodoServiceImpl implements TodoService{
   @Override
   public Integer deleteTodo(Integer id) {
     try{
-      return repository.delete(id);
+
+      if(repository.selectById(id)){
+        return repository.delete(id);
+      }
 
     }catch (RuntimeException e){
       throw new RuntimeException(e.getMessage());
     }
+    return 0;
   }
 
   @Override
-  public Integer editStatus(Integer id, String status) {
+  public Integer editStatus(Integer id, Status status) {
     try{
-
-      return repository.edit(id,status);
+      if(repository.selectById(id)){
+        return repository.edit(id,status);
+      }
 
     }catch (RuntimeException e){
       throw new RuntimeException(e.getMessage());
     }
+    return 0;
   }
 }

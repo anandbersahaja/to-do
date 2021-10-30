@@ -19,7 +19,7 @@ public class TodoRepositoryImpl implements TodoRepository{
   public List<Todo> getAll() {
     String sql = "SELECT * FROM todolist";
     try(Connection connection = dataSource.getConnection();
-        Statement statement = connection.createStatement();){
+        Statement statement = connection.createStatement()){
       try (ResultSet resultSet = statement.executeQuery(sql)) {
         List<Todo> todos = new ArrayList<>();
 
@@ -73,12 +73,12 @@ public class TodoRepositoryImpl implements TodoRepository{
   }
 
   @Override
-  public Integer edit(Integer id, String status) {
+  public Integer edit(Integer id, Status status) {
     String sql = "UPDATE todolist SET status = ? WHERE id = ?";
     try(Connection connection = dataSource.getConnection();
         PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
 
-      statement.setString(1, status);
+      statement.setString(1, status.toString());
       statement.setInt(2, id);
 
       return statement.executeUpdate();
@@ -114,5 +114,23 @@ public class TodoRepositoryImpl implements TodoRepository{
     }catch (SQLException e){
       throw new RuntimeException(e.getMessage());
     }
+  }
+
+  @Override
+  public Boolean selectById(Integer id) {
+    String sql = "SELECT * FROM todolist WHERE id = ?";
+    try(Connection connection = dataSource.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql)
+    ){
+      statement.setInt(1,id);
+
+      try(ResultSet resultSet =  statement.executeQuery()){
+        return resultSet.next();
+      }
+
+    }catch (SQLException e){
+      throw new RuntimeException(e.getMessage());
+    }
+
   }
 }

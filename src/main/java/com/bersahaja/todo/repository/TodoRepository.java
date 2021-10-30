@@ -12,7 +12,9 @@ public interface TodoRepository {
 
   Integer delete(Integer id);
 
-  Integer edit(Integer id, String status);
+  Integer edit(Integer id, Status status);
 
   List<Todo> selectByStatus(Status status);
+
+  Boolean selectById(Integer id);
 }

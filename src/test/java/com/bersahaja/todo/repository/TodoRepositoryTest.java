@@ -4,7 +4,6 @@ import com.bersahaja.todo.entity.Status;
 import com.bersahaja.todo.entity.Todo;
 import com.bersahaja.todo.util.DatabaseUtil;
 import com.zaxxer.hikari.HikariDataSource;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
@@ -36,7 +35,7 @@ public class TodoRepositoryTest {
   @Test
   void selectBystatus() {
     try {
-      List<Todo> todos = repository.selectByStatus(Status.SELESAI);
+      List<Todo> todos = repository.selectByStatus(Status.SUDAH);
 //      Assertions.assertNotNull(todos);
 //      Assertions.assertFalse(todos.isEmpty());
 
@@ -77,18 +76,9 @@ public class TodoRepositoryTest {
     }
   }
 
-  @Test
-  void testEdit() {
-    try{
-      Integer sudah = repository.edit(3, "SUDAH");
-      System.out.println(sudah);
-    }catch (RuntimeException e){
-      System.out.println(e.getMessage());
-    }
-  }
 
   @Test
   void print() {
-    System.out.println(Status.SELESAI.toString());
+    System.out.println(Status.SUDAH.toString());
   }
 }
