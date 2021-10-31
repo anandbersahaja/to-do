@@ -10,6 +10,7 @@ import com.bersahaja.todo.util.DatabaseUtil;
 import com.bersahaja.todo.util.Scan;
 import com.zaxxer.hikari.HikariDataSource;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -20,21 +21,25 @@ public class TodoView {
     this.service = service;
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException, InterruptedException {
     HikariDataSource dataSource = DatabaseUtil.getDataSource();
     TodoRepository repository = new TodoRepositoryImpl( dataSource);
     TodoService service = new TodoServiceImpl(repository);
     TodoView view = new TodoView(service);
 
-    view.show();
-    view.add();
-    view.editStatus();
-    view.showByStatus();
-    view.delete();
+    // view.show();
+    // view.add();
+    // view.editStatus();
+    // view.showByStatus();
+    // view.delete();
+    while(true){
+      view.menu();
+    }
 
   }
 
-  public void menu(){
+  public void menu() throws IOException, InterruptedException {
+    clearScreen();
     System.out.println("MENU");
     System.out.println("1] SHOW TODOLIST");
     System.out.println("2] ADD TODO");
@@ -43,6 +48,8 @@ public class TodoView {
     System.out.println("5] DELETE TASK");
     System.out.println("x] EXIT");
     var menu = Scan.getString("Pilih Menu");
+    System.out.println();
+    clearScreen();
 
     if(menu.equalsIgnoreCase("1")){
       show();
@@ -57,10 +64,11 @@ public class TodoView {
     }else if(menu.equalsIgnoreCase("x")){
       System.exit(0);
     }else{
-      System.out.println("PILIHAN TIDAK DIMENGERTI\n");
+      System.out.println("PILIHAN TIDAK DIMENGERTI");
     }
 
-
+    Scan.getString("\nPress [ENTER]");
+    System.out.println();
   }
   public void show(){
     try{
@@ -84,6 +92,7 @@ public class TodoView {
   }
 
   public void showByStatus(){
+    System.out.println("SHOW BY STATUS");
     try {
       Status status = Scan.getStatus("Status");
 
@@ -109,11 +118,9 @@ public class TodoView {
     System.out.println("ADD TODO");
     try{
       String task = Scan.getString("Task");
-      var dueDate = Scan.getDate("Due Date (yyyy-mm-dd)");
-      var dueTime = Scan.getTime("Due Time (hh:mm:ss)");
+      var localDateTime = Scan.getDL("Due Days");
       var status = Scan.getStatus("Status");
 
-      var localDateTime = dueDate.atTime(dueTime);
       Todo todo = new Todo(task, localDateTime, status);
 
       Integer add = service.addTodo(todo);
@@ -122,24 +129,43 @@ public class TodoView {
         System.out.println("SUCCESS ADD TASK INTO TODOLIST...");
       }
       else{
-        System.out.println("FALED ADD TASK INTO TODOLIST...");
+        System.out.println("FAILED ADD TASK INTO TODOLIST...");
       }
+
     }catch (RuntimeException | SQLException e){
       System.out.println("Error: "+e.getMessage());
     }
   }
 
   public void delete(){
+    System.out.println("DELETE TODO FROM LIST");
     try{
       Integer id = Scan.getInteger("Id");
-      Integer delete = service.deleteTodo(id);
+      Integer delete = 0;
 
-      if(delete > 0){
-        System.out.printf("SUCCESS REMOVING TASK WITH ID %d...\n",id);
+      // Jika datanya ada
+      if(service.selectById(id)){
+        Todo todo = service.getById(id);
+        System.out.println(todo.getTask() + " ==> "+todo.getStatus());
+        // tampilin
+
+        String yakin = Scan.getString("Apakah yakin [y/n]");
+
+        if(yakin.equalsIgnoreCase("y")){
+          delete = service.deleteTodo(id);
+        }
+
+        if(delete > 0){
+          System.out.println("SUCCESS REMOVING...");
+        }
+        else{
+          System.out.println("FAILED REMOVING...");
+        }
+      }else{
+        System.out.println("TASK WITH ID "+id+" NOT FOUND");
       }
-      else{
-        System.out.printf("FALED REMOVING TASK WITH ID %d...\n",id);
-      }
+
+
     }catch (RuntimeException e){
       System.out.println("Error: "+e.getMessage());
     }
@@ -147,22 +173,48 @@ public class TodoView {
   }
 
   public void editStatus(){
+    System.out.println("EDIT STATUS TASK");
     try{
       Integer id = Scan.getInteger("Id");
-      Status status = Scan.getStatus("Status");
 
-      Integer edit = service.editStatus(id, status);
+      if(service.selectById(id)){
+        Todo todo = service.getById(id);
+        System.out.println(todo.getTask() + " ==> "+todo.getStatus());
 
-      if(edit > 0){
-        System.out.println("SUCCESS EDITING STATUS...");
-      }
-      else{
-        System.out.println("FALED EDITING STATUS...");
+        Status status = Scan.getStatus("Set Status");
+
+        String yakin = Scan.getString("Apakah yakin [y/n]");
+
+        Integer edit = 0;
+        if(yakin.equalsIgnoreCase("y")){
+          edit = service.editStatus(id, status);
+        }
+        if(edit > 0){
+          System.out.println("SUCCESS EDITING STATUS...");
+        }
+        else{
+          System.out.println("FALED EDITING STATUS...");
+        }
+      }else{
+        System.out.println("TASK WITH ID "+id+" NOT FOUND");
       }
 
     }catch (RuntimeException | SQLException e){
       System.out.println("Error: "+ e.getMessage());
     }
 
+  }
+
+  public void clearScreen() throws IOException, InterruptedException {
+    String os = System.getenv("os");
+
+    if(os.contains("Window")){
+      // windows
+      new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+    }else{
+      Runtime.getRuntime().exec("clear");
+      System.out.println("\033[H\033[2J");
+      System.out.flush();
+    }
   }
 }

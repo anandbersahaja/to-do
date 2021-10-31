@@ -2,9 +2,7 @@ package com.bersahaja.todo.util;
 
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 
 
@@ -23,6 +21,20 @@ public class DateTimeTest {
     LocalTime localTime = LocalTime.parse("22:20:30");
     LocalDateTime of = LocalDateTime.of(localDate, localTime);
     System.out.println(of);
+
+  }
+
+  @Test
+  void testClock() {
+    var ld = LocalDate.now(Clock.system(ZoneId.of("Asia/Jakarta")));
+    var lt = LocalTime.now(Clock.system(ZoneId.of("UTC")));
+
+    System.out.println(lt);
+
+    LocalDate ld1 = ld.plusDays(2);
+
+    System.out.println(ld);
+    System.out.println(ld1);
 
   }
 }

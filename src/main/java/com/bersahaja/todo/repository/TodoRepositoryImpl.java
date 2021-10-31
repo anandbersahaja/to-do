@@ -133,4 +133,41 @@ public class TodoRepositoryImpl implements TodoRepository{
     }
 
   }
+
+  @Override
+  public Todo getById(Integer id) {
+    String sql = "SELECT * FROM todolist WHERE id = ?";
+    try(Connection connection = dataSource.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql)
+    ){
+      statement.setInt(1,id);
+
+      try(ResultSet resultSet =  statement.executeQuery()){
+//        Todo todo = new Todo();
+//
+//        if(resultSet.next()){
+//          todo.setId(resultSet.getInt("id"));
+//          todo.setTask(resultSet.getString("task"));
+//          todo.setDateTime(resultSet.getDate("deadline").toLocalDate()
+//                  .atTime(resultSet.getTime("deadline")
+//                          .toLocalTime()));
+//          todo.setStatus(Status.convert(resultSet.getString("status")));
+//        }
+//        return todo;
+
+        if(resultSet.next()){
+          return new Todo(
+                  resultSet.getInt("id"),
+                  resultSet.getString("task"),
+                  resultSet.getDate("deadline").toLocalDate()
+                          .atTime(resultSet.getTime("deadline").toLocalTime()),
+                  Status.convert(resultSet.getString("status")));
+        }
+
+        return new Todo();
+      }
+    }catch (SQLException e){
+      throw new RuntimeException(e.getMessage());
+    }
+  }
 }

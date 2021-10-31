@@ -17,4 +17,8 @@ public interface TodoService {
 
   Integer editStatus(Integer id, Status status);
 
+  Boolean selectById(Integer id);
+
+  Todo getById(Integer id);
+
 }

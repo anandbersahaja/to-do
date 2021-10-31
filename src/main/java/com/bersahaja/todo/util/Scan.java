@@ -3,8 +3,7 @@ package com.bersahaja.todo.util;
 import com.bersahaja.todo.entity.Status;
 
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.*;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
@@ -39,5 +38,13 @@ public class Scan {
 
   public static LocalTime getTime(String info) throws DateTimeParseException {
     return LocalTime.parse(getString(info));
+  }
+
+  public static LocalDateTime getDL(String info) throws DateTimeParseException {
+    Integer days = getInteger(info);
+    var tempDate = LocalDate.now(Clock.system(ZoneId.of("Asia/Jakarta")));
+    var lt = LocalTime.parse("00:00:00");
+
+    return tempDate.plusDays(days).atTime(lt);
   }
 }

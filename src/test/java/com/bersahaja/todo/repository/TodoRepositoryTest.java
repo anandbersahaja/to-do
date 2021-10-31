@@ -76,9 +76,29 @@ public class TodoRepositoryTest {
     }
   }
 
-
   @Test
   void print() {
     System.out.println(Status.SUDAH.toString());
+  }
+
+  @Test
+  void getById() {
+
+    try{
+      Todo todo = repository.getById(3);
+
+      if(todo.getTask() != null){
+
+        System.out.println(todo.getId());
+        System.out.println(todo.getTask());
+        System.out.println(todo.getStatus());
+      }else{
+        System.out.println("Kocong");
+      }
+    }catch (RuntimeException e){
+      System.out.println(e.getMessage());
+    }
+
+
   }
 }

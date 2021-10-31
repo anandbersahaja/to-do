@@ -78,4 +78,14 @@ public class TodoServiceImpl implements TodoService{
     }
     return 0;
   }
+
+  @Override
+  public Boolean selectById(Integer id) {
+    return repository.selectById(id);
+  }
+
+  @Override
+  public Todo getById(Integer id) {
+    return repository.getById(id);
+  }
 }

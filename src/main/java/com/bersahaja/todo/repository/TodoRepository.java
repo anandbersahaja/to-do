@@ -17,4 +17,6 @@ public interface TodoRepository {
   List<Todo> selectByStatus(Status status);
 
   Boolean selectById(Integer id);
+
+  Todo getById(Integer id);
 }
